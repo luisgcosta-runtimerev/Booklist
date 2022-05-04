@@ -1,9 +1,24 @@
-import { Button, Container, TextField, Typography } from '@mui/material';
+import {
+  Button,
+  Container,
+  TextField,
+  Typography,
+  RadioGroup,
+  FormControl,
+  FormLabel,
+  FormControlLabel,
+  Radio,
+  InputLabel,
+  Select,
+  MenuItem,
+  Box
+} from '@mui/material';
 import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
+import { makeStyles } from '@mui/styles';
 import { BookContext } from '../DataContext';
 import Form from '../components/Form';
 
@@ -23,6 +38,12 @@ const schema = yup.object().shape({
   active: yup.bool().required('You need to select if the book will be visible')
 });
 
+const useStyles = makeStyles((theme) => ({
+  button: {
+    margin: theme.spacing(2, 0, 2)
+  }
+}));
+
 export default function Createbook() {
   const { setValues } = useContext(BookContext);
   const {
@@ -38,12 +59,19 @@ export default function Createbook() {
     navigate('/');
     setValues(data);
   };
+  const [value, setValue] = React.useState('female');
+
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  };
 
   const author = register('author');
   const title = register('title');
   const isbn = register('isbn');
   const description = register('isbn');
   const active = register('active');
+
+  const styles = useStyles();
 
   return (
     <Container>
@@ -56,7 +84,6 @@ export default function Createbook() {
         Insert a new Book
       </Typography>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        {/* !! -> cast a value to boolean */}
         <TextField
           inputRef={author.ref}
           onChange={author.onChange}
@@ -111,7 +138,47 @@ export default function Createbook() {
           multiline
           rows={4}
         />
-        <Button>Next</Button>
+        <FormControl fullWidth>
+          <FormLabel id="demo-controlled-radio-buttons-group">Gender</FormLabel>
+          <RadioGroup
+            aria-labelledby="demo-controlled-radio-buttons-group"
+            name="controlled-radio-buttons-group"
+            value={value}
+            onChange={handleChange}
+          >
+            <FormControlLabel
+              value="female"
+              control={<Radio />}
+              label="Female"
+            />
+            <FormControlLabel value="male" control={<Radio />} label="Male" />
+          </RadioGroup>
+        </FormControl>
+        <Box sx={{ minWidth: 120, marginTop: '15px ' }}>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Type of book</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={10}
+              label="Type of Book"
+              onChange={handleChange}
+            >
+              <MenuItem value={10}>Ten</MenuItem>
+              <MenuItem value={20}>Twenty</MenuItem>
+              <MenuItem value={30}>Thirty</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          className={styles.button}
+        >
+          Next
+        </Button>
       </Form>
     </Container>
   );
