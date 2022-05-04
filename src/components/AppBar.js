@@ -21,6 +21,10 @@ const useStyles = makeStyles((theme) => ({
     textShadow: '1px 1px darkmagenta',
     padding: theme.spacing(1)
   },
+  menuItems: {
+    margin: theme.spacing(1),
+    fontFamily: 'Permanent Marker'
+  },
   active: {
     background: '#f4f4f4'
   }
@@ -104,7 +108,9 @@ export default function ResponsiveAppBar() {
                   location.pathname === page.path ? styles.active : null
                 }
               >
-                <Typography textAlign="center">{page.name}</Typography>
+                <Typography className={styles.menuItems} textAlign="center">
+                  {page.name}
+                </Typography>
               </MenuItem>
             ))}
           </Menu>
@@ -128,8 +134,12 @@ export default function ResponsiveAppBar() {
           {pages.map((page) => (
             <Button
               key={page.name}
-              onClick={handleCloseNavMenu}
+              onClick={() => {
+                navigate(page.path);
+                handleCloseNavMenu();
+              }}
               sx={{ my: 2, color: 'white', display: 'block' }}
+              className={styles.menuItems}
             >
               {page.name}
             </Button>
