@@ -1,22 +1,19 @@
-import React, { createContext, useState} from 'react'
+import React, { createContext, useState } from 'react';
 
-export const BookContext = createContext()
+export const BookContext = createContext();
 
-export default function DataContext({children, ...props}) {
-const [books, setBooks] = useState({})
+export default function DataContext({ children, ...props }) {
+  const [books, setBooks] = useState({});
 
-const setValues = (values) => {
-    setBooks( prevData => ({
-        ...prevData,
-        ...values
-    }))
-}
+  const setValues = (values) => {
+    setBooks((prevData) => ({
+      ...prevData,
+      ...values
+    }));
+  };
   return (
-    <BookContext.Provider value={{books,setValues}} {...props}>
-        {
-            children
-        }
+    <BookContext.Provider value={{ books, setValues }} {...props}>
+      {children}
     </BookContext.Provider>
-  )
+  );
 }
-
