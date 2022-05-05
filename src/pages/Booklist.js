@@ -26,8 +26,6 @@ export default function Booklist() {
   const styles = useStyles();
   const { books, setValueRemove } = useContext(BookContext);
   const navigate = useNavigate();
-  // eslint-disable-next-line no-console
-  console.log('booklist books:', books);
 
   const handleDelete = (isbn) => {
     setValueRemove(books.filter((book) => book.isbn !== isbn));
