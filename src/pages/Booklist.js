@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import { Container, Typography, Link } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import Masonry from 'react-masonry-css';
 import { makeStyles } from '@mui/styles';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import BookCard from '../components/BookCard';
 import { BookContext } from '../DataContext';
 
@@ -49,7 +49,7 @@ export default function Booklist() {
           sx={{ marginTop: '30px' }}
         >
           Sorry, I dont have books to show. Please{' '}
-          <Link href="/create">add one</Link>
+          <Link to="/create">add one</Link>
         </Typography>
       ) : (
         <Masonry
