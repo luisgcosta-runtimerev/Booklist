@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Container } from '@mui/material';
 import Masonry from 'react-masonry-css';
 import { makeStyles } from '@mui/styles';
+import { useNavigate } from 'react-router-dom';
 import BookCard from '../components/BookCard';
 import { BookContext } from '../DataContext';
 
@@ -23,10 +24,17 @@ const useStyles = makeStyles({
 
 export default function Booklist() {
   const styles = useStyles();
-  const { books, setValues } = useContext(BookContext);
+  const { books, setValueRemove } = useContext(BookContext);
+  const navigate = useNavigate();
   // eslint-disable-next-line no-console
-  console.log('context books:', books);
-  console.log('context setValues:', setValues);
+  console.log('booklist books:', books);
+
+  const handleDelete = (isbn) => {
+    setValueRemove(books.filter((book) => book.isbn !== isbn));
+  };
+  const handleUpdate = (isbn) => {
+    navigate(`/create/${isbn}`);
+  };
 
   const breakpointColumnsObj = {
     default: 4,
@@ -40,9 +48,15 @@ export default function Booklist() {
         className={styles.myMasonryGrid}
         columnClassName={styles.myMasonryGridColumn}
       >
-        <div className={styles.note}>
-          <BookCard />
-        </div>
+        {books.map((book) => (
+          <div className={styles.note} key={book.isbn}>
+            <BookCard
+              book={book}
+              handleDelete={handleDelete}
+              handleUpdate={handleUpdate}
+            />
+          </div>
+        ))}
       </Masonry>
     </Container>
   );

@@ -28,6 +28,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Booklist />} />
             <Route path="/create" element={<Createbook />} />
+            <Route path="/create/:id" element={<Createbook />} />
           </Routes>
         </DataContext>
       </Router>

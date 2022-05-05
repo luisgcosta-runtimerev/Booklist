@@ -11,13 +11,14 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Box
+  Box,
+  FormHelperText
 } from '@mui/material';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { makeStyles } from '@mui/styles';
 import { BookContext } from '../DataContext';
 import Form from '../components/Form';
@@ -31,11 +32,10 @@ const schema = yup.object().shape({
   isbn: yup
     .number()
     .typeError('You need to insert a number')
-    .required('ISBN is a required field')
-    .positive()
-    .integer(),
+    .required('ISBN is a required field'),
   description: yup.string(),
-  active: yup.bool().required('You need to select if the book will be visible')
+  optShow: yup.bool(),
+  typeBook: yup.string().required()
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -45,31 +45,54 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Createbook() {
-  const { setValues } = useContext(BookContext);
+  const { books, setValues, setValueRemove } = useContext(BookContext);
+  const { id } = useParams();
+  const book = books.filter((bookId) => bookId.isbn === parseInt(id, 10));
+  const [value, setValue] = useState(book[0]?.optShow || false);
+
   const {
     register,
+    watch,
     handleSubmit,
     formState: { errors }
   } = useForm({
     resolver: yupResolver(schema),
-    mode: 'onBlur'
+    mode: 'onBlur',
+    defaultValues: {
+      author: book[0]?.author,
+      title: book[0]?.title,
+      isbn: book[0]?.isbn,
+      description: book[0]?.description,
+      optShow: book[0]?.optShow,
+      typeBook: book[0]?.typeBook
+    }
   });
+
   const navigate = useNavigate();
   const onSubmit = (data) => {
-    navigate('/');
-    setValues(data);
-  };
-  const [value, setValue] = React.useState('female');
-
-  const handleChange = (event) => {
-    setValue(event.target.value);
+    if (!id) {
+      navigate('/');
+      setValues(data);
+    } else {
+      const myBook = books.filter((bookId) => bookId.isbn !== parseInt(id, 10));
+      myBook.push(data);
+      setValueRemove(myBook);
+      navigate('/');
+    }
   };
 
   const author = register('author');
   const title = register('title');
   const isbn = register('isbn');
-  const description = register('isbn');
-  const active = register('active');
+  const description = register('description');
+  const optShow = register('optShow');
+  const typeBook = register('typeBook');
+  const typeBookValue = watch('typeBook', book[0]?.typeBook || 'action');
+
+  const handleChange = (event) => {
+    setValue(event.target.value);
+    optShow.onChange(event);
+  };
 
   const styles = useStyles();
 
@@ -139,34 +162,52 @@ export default function Createbook() {
           rows={4}
         />
         <FormControl fullWidth>
-          <FormLabel id="demo-controlled-radio-buttons-group">Gender</FormLabel>
+          <FormLabel id="demo-controlled-radio-buttons-group">
+            Choose visibility
+          </FormLabel>
           <RadioGroup
             aria-labelledby="demo-controlled-radio-buttons-group"
-            name="controlled-radio-buttons-group"
-            value={value}
+            name="optShow"
             onChange={handleChange}
+            value={value}
           >
             <FormControlLabel
-              value="female"
+              value
               control={<Radio />}
-              label="Female"
+              label="Show book on list"
+              {...optShow}
             />
-            <FormControlLabel value="male" control={<Radio />} label="Male" />
+            <FormControlLabel
+              value={false}
+              control={<Radio />}
+              label="Hide book on list"
+              {...optShow}
+            />
           </RadioGroup>
+          {errors.optShow ? (
+            <FormHelperText sx={{ color: 'red' }}>
+              {errors?.optShow?.message}
+            </FormHelperText>
+          ) : null}
         </FormControl>
+
         <Box sx={{ minWidth: 120, marginTop: '15px ' }}>
           <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Type of book</InputLabel>
+            <InputLabel id="typeBookLabel">Type of book</InputLabel>
             <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={10}
+              labelId="typeBookLabel"
+              name="typeBook"
+              value={typeBookValue}
               label="Type of Book"
-              onChange={handleChange}
+              {...typeBook}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+              <MenuItem value="action">Action</MenuItem>
+              <MenuItem value="classic">Classic</MenuItem>
+              <MenuItem value="comic">Comic Book</MenuItem>
+              <MenuItem value="detective">Detective</MenuItem>
+              <MenuItem value="fantasy">Fantasy</MenuItem>
+              <MenuItem value="horror">Horror</MenuItem>
+              <MenuItem value="Other">Other</MenuItem>
             </Select>
           </FormControl>
         </Box>
@@ -177,11 +218,9 @@ export default function Createbook() {
           color="primary"
           className={styles.button}
         >
-          Next
+          Register
         </Button>
       </Form>
     </Container>
   );
 }
-
-// autor, titulo, isbn, descrição, genero, ativo

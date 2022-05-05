@@ -16,31 +16,32 @@ const useStyles = makeStyles({
   }
 });
 
-export default function BookCard(props) {
-  const onClickHandler = () => console.log('clicked');
-  console.log('props: ', props);
+export default function BookCard({ handleDelete, handleUpdate, ...props }) {
   const styles = useStyles();
-
+  const { book } = props;
   return (
     <Container>
       <Card elevation={1} sx={{ maxWidth: 275 }} className={styles.card}>
         <CardContent>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            Word of the Day
+            {book.author}
           </Typography>
           <Typography variant="h5" component="div" className={styles.textStyle}>
-            hi
+            {book.title}
           </Typography>
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            adjective
+            {book.typeBook}
           </Typography>
-          <Typography variant="body2">hi</Typography>
+          <Typography variant="body2" sx={{ mb: 3 }}>
+            {book.description}
+          </Typography>
+          <Typography sx={{ fontSize: 10 }}>ISBN:{book.isbn}</Typography>
         </CardContent>
         <CardActions>
-          <Button onClick={onClickHandler} size="small">
+          <Button onClick={() => handleUpdate(book.isbn)} size="small">
             Update
           </Button>
-          <Button onClick={onClickHandler} size="small">
+          <Button onClick={() => handleDelete(book.isbn)} size="small">
             Delete
           </Button>
         </CardActions>
