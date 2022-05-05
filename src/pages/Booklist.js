@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Container } from '@mui/material';
+import { Container, Typography, Link } from '@mui/material';
 import Masonry from 'react-masonry-css';
 import { makeStyles } from '@mui/styles';
 import { useNavigate } from 'react-router-dom';
@@ -43,21 +43,33 @@ export default function Booklist() {
   };
   return (
     <Container>
-      <Masonry
-        breakpointCols={breakpointColumnsObj}
-        className={styles.myMasonryGrid}
-        columnClassName={styles.myMasonryGridColumn}
-      >
-        {books.map((book) => (
-          <div className={styles.note} key={book.isbn}>
-            <BookCard
-              book={book}
-              handleDelete={handleDelete}
-              handleUpdate={handleUpdate}
-            />
-          </div>
-        ))}
-      </Masonry>
+      {books.length === 0 ? (
+        <Typography
+          component="h2"
+          variant="h5"
+          align="center"
+          sx={{ marginTop: '30px' }}
+        >
+          Sorry, I dont have books to show. Please{' '}
+          <Link href="/create">add one</Link>
+        </Typography>
+      ) : (
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className={styles.myMasonryGrid}
+          columnClassName={styles.myMasonryGridColumn}
+        >
+          {books.map((book) => (
+            <div className={styles.note} key={book.isbn}>
+              <BookCard
+                book={book}
+                handleDelete={handleDelete}
+                handleUpdate={handleUpdate}
+              />
+            </div>
+          ))}
+        </Masonry>
+      )}
     </Container>
   );
 }
